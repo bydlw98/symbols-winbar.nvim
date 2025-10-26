@@ -1,3 +1,8 @@
+---@class symbols-winbar.Config
+---@field kind_icons? table<string, string>
+---@field seperator? string
+
+---@type symbols-winbar.Config
 local config = {
   kind_icons = {
     File = " ",
@@ -116,7 +121,10 @@ end
 
 local M = {}
 
-function M.setup()
+---@param opts? symbols-winbar.Config
+function M.setup(opts)
+  config = vim.tbl_deep_extend("force", config, opts or {})
+
   vim.api.nvim_create_autocmd({ "BufWinEnter", "CursorHold" }, {
     group = vim.api.nvim_create_augroup("symbols-winbar.nvim", { clear = true }),
     callback = function()
