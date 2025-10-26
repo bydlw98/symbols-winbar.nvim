@@ -21,8 +21,9 @@ end
 
 ---@param root lsp.DocumentSymbol[]
 ---@param cursor integer[]
----@return lsp.DocumentSymbol?
-local function search_symbol(root, cursor)
+---@param symbols_list string[]
+---@return boolean
+local function search_symbol(root, cursor, symbols_list)
   ---Sort symbols in reverse order
   ---@param a lsp.DocumentSymbol
   ---@param b lsp.DocumentSymbol
@@ -36,20 +37,17 @@ local function search_symbol(root, cursor)
 
   for _, node in ipairs(root) do
     if in_range(cursor, node.range) then
+      table.insert(symbols_list, node.name)
+
       if node.children then
-        local result = search_symbol(node.children, cursor)
-        if result then
-          return result
-        else
-          return node
-        end
+        return search_symbol(node.children, cursor, symbols_list)
       else
-        return node
+        return true
       end
     end
   end
 
-  return nil
+  return false
 end
 
 local function update()
@@ -71,9 +69,12 @@ local function update()
       local cursor = vim.api.nvim_win_get_cursor(0)
       cursor[1] = cursor[1] - 1
 
-      local symbol = search_symbol(symbols, cursor)
-      if symbol then
-        vim.wo.winbar = path .. config.seperator .. symbol.name
+      ---@type string[]
+      local symbols_list = {}
+      search_symbol(symbols, cursor, symbols_list)
+
+      if #symbols_list > 0 then
+        vim.wo.winbar = path .. config.seperator .. table.concat(symbols_list, config.seperator)
       else
         vim.wo.winbar = path
       end
