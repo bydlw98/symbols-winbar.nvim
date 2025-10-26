@@ -1,4 +1,32 @@
 local config = {
+  kind_icons = {
+    File = " ",
+    Module = " ",
+    Namespace = " ",
+    Package = " ",
+    Class = " ",
+    Method = " ",
+    Property = " ",
+    Field = " ",
+    Constructor = " ",
+    Enum = " ",
+    Interface = " ",
+    Function = " ",
+    Variable = " ",
+    Constant = " ",
+    String = " ",
+    Number = " ",
+    Boolean = " ",
+    Array = " ",
+    Object = " ",
+    Key = " ",
+    Null = " ",
+    EnumMember = " ",
+    Struct = " ",
+    Event = " ",
+    Operator = " ",
+    TypeParameter = " ",
+  },
   seperator = "  ",
 }
 
@@ -37,7 +65,9 @@ local function search_symbol(root, cursor, symbols_list)
 
   for _, node in ipairs(root) do
     if in_range(cursor, node.range) then
-      table.insert(symbols_list, node.name)
+      local kind = vim.lsp.protocol.SymbolKind[node.kind]
+      local symbol = config.kind_icons[kind] .. node.name
+      table.insert(symbols_list, symbol)
 
       if node.children then
         return search_symbol(node.children, cursor, symbols_list)
