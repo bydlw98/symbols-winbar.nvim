@@ -35,6 +35,18 @@ local config = {
   seperator = "  ",
 }
 
+---@return string
+local function path_section()
+  local path = vim.fn.expand("%")
+  local dirname = table.concat(vim.split(vim.fs.dirname(path), "/"), config.seperator)
+
+  local filename = vim.fs.basename(path)
+  local extension = filename:match("[^%.]*$") or ""
+  local icon = require("nvim-web-devicons").get_icon(filename, extension) or ""
+
+  return dirname .. config.seperator .. icon .. " " .. filename
+end
+
 ---@param cursor integer[]
 ---@param range lsp.Range
 ---@return boolean
@@ -86,9 +98,6 @@ local function search_symbol(root, cursor, symbols_list)
 end
 
 local function update()
-  local path = vim.fn.expand("%")
-  path = table.concat(vim.split(path, "/"), config.seperator)
-
   local text_document = vim.lsp.util.make_text_document_params(0)
   local method = "textDocument/documentSymbol"
   local client = vim.lsp.get_clients({ bufnr = 0, method = method })[1]
@@ -96,7 +105,7 @@ local function update()
   if client then
     client:request(method, { textDocument = text_document }, function(err, symbols)
       if err then
-        vim.wo.winbar = path
+        vim.wo.winbar = path_section()
         return
       end
 
@@ -109,13 +118,15 @@ local function update()
       search_symbol(symbols, cursor, symbols_list)
 
       if #symbols_list > 0 then
-        vim.wo.winbar = path .. config.seperator .. table.concat(symbols_list, config.seperator)
+        vim.wo.winbar = path_section()
+          .. config.seperator
+          .. table.concat(symbols_list, config.seperator)
       else
-        vim.wo.winbar = path
+        vim.wo.winbar = path_section()
       end
     end)
   else
-    vim.wo.winbar = path
+    vim.wo.winbar = path_section()
   end
 end
 
