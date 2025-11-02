@@ -35,6 +35,13 @@ local config = {
   seperator = "  ",
 }
 
+---@param hlgroup string
+---@param text string
+---@return string
+local function highlight(hlgroup, text)
+  return "%#" .. hlgroup .. "#" .. text .. "%*"
+end
+
 ---@return string
 local function path_section()
   local path = vim.fn.expand("%")
@@ -42,9 +49,10 @@ local function path_section()
 
   local filename = vim.fs.basename(path)
   local extension = filename:match("[^%.]*$") or ""
-  local icon = require("nvim-web-devicons").get_icon(filename, extension) or ""
+  local icon, icon_hl =
+    require("nvim-web-devicons").get_icon(filename, extension, { default = true })
 
-  return dirname .. config.seperator .. icon .. " " .. filename
+  return dirname .. config.seperator .. highlight(icon_hl, icon) .. " " .. filename
 end
 
 ---@param cursor integer[]
