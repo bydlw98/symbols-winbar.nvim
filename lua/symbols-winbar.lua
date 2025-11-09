@@ -1,9 +1,13 @@
 ---@class symbols-winbar.Config
+---@field activate fun():boolean
 ---@field kind_icons? table<string, string>
 ---@field seperator? string
 
 ---@type symbols-winbar.Config
 local config = {
+  activate = function()
+    return vim.bo.buftype == ""
+  end,
   kind_icons = {
     File = " ",
     Module = " ",
@@ -108,6 +112,10 @@ local function search_symbol(root, cursor, symbols_list)
 end
 
 local function update()
+  if not config.activate() then
+    return
+  end
+
   local text_document = vim.lsp.util.make_text_document_params(0)
   local method = "textDocument/documentSymbol"
   local client = vim.lsp.get_clients({ bufnr = 0, method = method })[1]
