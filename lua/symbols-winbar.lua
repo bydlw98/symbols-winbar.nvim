@@ -97,7 +97,7 @@ local function search_symbol(root, cursor, symbols_list)
   for _, node in ipairs(root) do
     if in_range(cursor, node.range) then
       local kind = vim.lsp.protocol.SymbolKind[node.kind]
-      local symbol = config.kind_icons[kind] .. node.name
+      local symbol = highlight("SymbolsWinbar" .. kind, config.kind_icons[kind]) .. node.name
       table.insert(symbols_list, symbol)
 
       if node.children then
@@ -153,6 +153,41 @@ local M = {}
 ---@param opts? symbols-winbar.Config
 function M.setup(opts)
   config = vim.tbl_deep_extend("force", config, opts or {})
+
+  ---@type table<string, vim.api.keyset.highlight>
+  local hlgroups = {
+    SymbolsWinbarFile = { link = "Structure" },
+    SymbolsWinbarModule = { link = "@module" },
+    SymbolsWinbarNamespace = { link = "@lsp.type.namespace" },
+    SymbolsWinbarPackage = { link = "Structure" },
+    SymbolsWinbarClass = { link = "@lsp.type.class" },
+    SymbolsWinbarMethod = { link = "@lsp.type.method" },
+    SymbolsWinbarProperty = { link = "@lsp.type.property" },
+    SymbolsWinbarField = { link = "@lsp.type.field" },
+    SymbolsWinbarConstructor = { link = "@lsp.type.constructor" },
+    SymbolsWinbarEnum = { link = "@lsp.type.enum" },
+    SymbolsWinbarInterface = { link = "@lsp.type.interface" },
+    SymbolsWinbarFunction = { link = "@lsp.type.function" },
+    SymbolsWinbarVariable = { link = "@lsp.type.variable" },
+    SymbolsWinbarConstant = { link = "@constant" },
+    SymbolsWinbarString = { link = "@lsp.type.string" },
+    SymbolsWinbarNumber = { link = "@lsp.type.number" },
+    SymbolsWinbarBoolean = { link = "Boolean" },
+    SymbolsWinbarArray = { link = "@lsp.type.operator" },
+    SymbolsWinbarObject = { link = "Structure" },
+    SymbolsWinbarKey = { link = "Identifier" },
+    SymbolsWinbarNull = { link = "Special" },
+    SymbolsWinbarEnumMember = { link = "@lsp.type.enumMember" },
+    SymbolsWinbarStruct = { link = "@lsp.type.struct" },
+    SymbolsWinbarEvent = { link = "@lsp.type.event" },
+    SymbolsWinbarOperator = { link = "@lsp.type.operator" },
+    SymbolsWinbarTypeParameter = { link = "@lsp.type.typeParameter" },
+  }
+
+  for name, val in pairs(hlgroups) do
+    val.default = true
+    vim.api.nvim_set_hl(0, name, val)
+  end
 
   vim.api.nvim_create_autocmd({ "BufWinEnter", "CursorHold" }, {
     group = vim.api.nvim_create_augroup("symbols-winbar.nvim", { clear = true }),
