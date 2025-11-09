@@ -45,14 +45,16 @@ end
 ---@return string
 local function path_section()
   local path = vim.fn.expand("%")
-  local dirname = table.concat(vim.split(vim.fs.dirname(path), "/"), config.seperator)
+  local components = vim.split(path, "/")
 
-  local filename = vim.fs.basename(path)
+  local filename = components[#components]
   local extension = filename:match("[^%.]*$") or ""
   local icon, icon_hl =
     require("nvim-web-devicons").get_icon(filename, extension, { default = true })
 
-  return dirname .. config.seperator .. highlight(icon_hl, icon) .. " " .. filename
+  components[#components] = highlight(icon_hl, icon) .. " " .. filename
+
+  return table.concat(components, config.seperator)
 end
 
 ---@param cursor integer[]
