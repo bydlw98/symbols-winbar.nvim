@@ -50,8 +50,11 @@ end
 ---@return string
 local function path_section()
   local path = vim.fn.expand("%")
-  local components = vim.split(path, "/")
+  if path == "" then
+    return "[No Name]"
+  end
 
+  local components = vim.split(path, "/")
   local filename = components[#components]
   local extension = filename:match("[^%.]*$") or ""
   local icon, icon_hl =
