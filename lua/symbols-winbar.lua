@@ -59,6 +59,14 @@ local function path_section()
 
   components[#components] = winbar_hl(icon_hl, icon) .. " " .. filename
 
+  --If `path` starts with `/` e.g. "/etc/passwd", `components[1]` will be an empty string.
+  --Thus the concatenated winbar path section will be ` > etc > passwd`.
+  --Instead what we want is `/etc > passwd`.
+  if components[1] == "" then
+    table.remove(components, 1)
+    components[1] = "/" .. components[1]
+  end
+
   return table.concat(components, config.seperator)
 end
 
