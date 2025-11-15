@@ -39,10 +39,11 @@ local config = {
   seperator = "  ",
 }
 
+---Returns a winbar formatted `text` highlighted with `hlgroup`.
 ---@param hlgroup string
 ---@param text string
 ---@return string
-local function highlight(hlgroup, text)
+local function winbar_hl(hlgroup, text)
   return "%#" .. hlgroup .. "#" .. text .. "%*"
 end
 
@@ -56,7 +57,7 @@ local function path_section()
   local icon, icon_hl =
     require("nvim-web-devicons").get_icon(filename, extension, { default = true })
 
-  components[#components] = highlight(icon_hl, icon) .. " " .. filename
+  components[#components] = winbar_hl(icon_hl, icon) .. " " .. filename
 
   return table.concat(components, config.seperator)
 end
@@ -97,7 +98,7 @@ local function search_symbol(root, cursor, symbols_list)
   for _, node in ipairs(root) do
     if in_range(cursor, node.range) then
       local kind = vim.lsp.protocol.SymbolKind[node.kind]
-      local symbol = highlight("SymbolsWinbar" .. kind, config.kind_icons[kind]) .. node.name
+      local symbol = winbar_hl("SymbolsWinbar" .. kind, config.kind_icons[kind]) .. node.name
       table.insert(symbols_list, symbol)
 
       if node.children then
