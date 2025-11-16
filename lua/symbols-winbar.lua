@@ -57,10 +57,12 @@ local function path_section()
   local components = vim.split(path, "/")
   local filename = components[#components]
   local extension = filename:match("[^%.]*$") or ""
-  local icon, icon_hl =
-    require("nvim-web-devicons").get_icon(filename, extension, { default = true })
 
-  components[#components] = winbar_hl(icon_hl, icon) .. " " .. filename
+  local devicons_ok, devicons = pcall(require, "nvim-web-devicons")
+  if devicons_ok then
+    local icon, icon_hl = devicons.get_icon(filename, extension, { default = true })
+    components[#components] = winbar_hl(icon_hl, icon) .. " " .. filename
+  end
 
   --If `path` starts with `/` e.g. "/etc/passwd", `components[1]` will be an empty string.
   --Thus the concatenated winbar path section will be ` > etc > passwd`.
