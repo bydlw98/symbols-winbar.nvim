@@ -1,13 +1,13 @@
 ---@class symbols-winbar.Config
----@field activate fun():boolean
----@field kind_icons? table<string, string>
----@field seperator? string
-
----@type symbols-winbar.Config
 local config = {
+  ---Checks if we should update the winbar of current window.
+  ---@type fun():boolean
   activate = function()
     return vim.bo.buftype == ""
   end,
+
+  ---Icons for different `vim.lsp.protocol.SymbolKind`.
+  ---@type table<string, string>
   kind_icons = {
     File = " ",
     Module = " ",
@@ -36,6 +36,9 @@ local config = {
     Operator = " ",
     TypeParameter = " ",
   },
+
+  ---Winbar content seperator.
+  ---@type string
   seperator = "  ",
 }
 
@@ -47,6 +50,7 @@ local function winbar_hl(hlgroup, text)
   return "%#" .. hlgroup .. "#" .. text .. "%*"
 end
 
+---Returns a winbar formatted string containing the current path.
 ---@return string
 local function path_section()
   local path = vim.fn.expand("%")
@@ -75,6 +79,7 @@ local function path_section()
   return table.concat(components, config.seperator)
 end
 
+---Checks whether (0, 0)-indexed `cursor` is within `range`.
 ---@param cursor integer[]
 ---@param range lsp.Range
 ---@return boolean
@@ -92,6 +97,7 @@ local function in_range(cursor, range)
     )
 end
 
+---Recursively search for symbol under `cursor` and update `symbols_list` with the symbols's hierarchy.
 ---@param root lsp.DocumentSymbol[]
 ---@param cursor integer[]
 ---@param symbols_list string[]
@@ -125,6 +131,7 @@ local function search_symbol(root, cursor, symbols_list)
   return false
 end
 
+---Updates the winbar of current window.
 local function update()
   if not config.activate() then
     return
@@ -162,6 +169,7 @@ local function update()
   end
 end
 
+---@class symbols-winbar
 local M = {}
 
 ---@param opts? symbols-winbar.Config
