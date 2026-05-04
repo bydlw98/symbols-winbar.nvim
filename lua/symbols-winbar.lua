@@ -40,6 +40,10 @@ local config = {
   ---Winbar content seperator.
   ---@type string
   seperator = "  ",
+
+  ---Number of milliseconds before updating winbar.
+  ---@type integer
+  updatetime = 1000,
 }
 
 ---Returns a winbar formatted `text` highlighted with `hlgroup`.
@@ -211,10 +215,15 @@ function M.setup(opts)
     vim.api.nvim_set_hl(0, name, val)
   end
 
-  vim.api.nvim_create_autocmd({ "BufWinEnter", "CursorHold" }, {
+  local update_timer = assert(vim.uv.new_timer(), "Failed to create timer for symbols-winbar.nvim")
+  vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
     group = vim.api.nvim_create_augroup("symbols-winbar.nvim", { clear = true }),
     callback = function()
-      update()
+      update_timer:start(0, config.updatetime, function()
+        vim.schedule(function()
+          update()
+        end)
+      end)
     end,
   })
 end
