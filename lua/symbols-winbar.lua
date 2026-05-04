@@ -2,7 +2,7 @@
 local config = {
   ---Checks if we should update the winbar of current window.
   ---@type fun():boolean
-  activate = function()
+  is_enabled = function()
     return vim.bo.buftype == ""
   end,
 
@@ -137,7 +137,7 @@ end
 
 ---Updates the winbar of current window.
 local function update()
-  if not config.activate() then
+  if not config.is_enabled() then
     return
   end
 
