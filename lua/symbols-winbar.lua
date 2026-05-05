@@ -147,7 +147,8 @@ local function update()
 
   if client then
     client:request(method, { textDocument = text_document }, function(err, symbols)
-      if err then
+      -- Checks if an error occured or if no symbols are found.
+      if err or not symbols then
         vim.wo.winbar = path_section()
         return
       end
