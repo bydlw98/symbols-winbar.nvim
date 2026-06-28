@@ -41,9 +41,9 @@ local config = {
   ---@type string
   left_padding = "  ",
 
-  ---Winbar content seperator.
+  ---Winbar content separator.
   ---@type string
-  seperator = "  ",
+  separator = "  ",
 
   ---Number of milliseconds before updating winbar.
   ---@type integer
@@ -86,7 +86,7 @@ local function path_section()
 
   components[1] = config.left_padding .. components[1]
 
-  return table.concat(components, config.seperator)
+  return table.concat(components, config.separator)
 end
 
 ---Checks whether (0, 0)-indexed `cursor` is within `range`.
@@ -95,9 +95,9 @@ end
 ---@return boolean
 local function in_range(cursor, range)
   -- Checks for the following:
-  -- 1. cursor is on same line as start range and greator than or equal start character
-  -- 2. cursor is in between start and end lines
-  -- 3. cursor is not on same line as start range and on same line as end range and less than or equal end character
+  -- 1. Cursor is on same line as start range and greater than or equal start character
+  -- 2. Cursor is in between start and end lines
+  -- 3. Cursor is not on same line as start range and on same line as end range and less than or equal end character
   return (cursor[1] == range.start.line and cursor[2] >= range.start.character)
     or (cursor[1] > range.start.line and cursor[1] < range["end"].line)
     or (
@@ -169,8 +169,8 @@ local function update()
 
       if #symbols_list > 0 then
         vim.wo.winbar = path_section()
-          .. config.seperator
-          .. table.concat(symbols_list, config.seperator)
+          .. config.separator
+          .. table.concat(symbols_list, config.separator)
       else
         vim.wo.winbar = path_section()
       end
