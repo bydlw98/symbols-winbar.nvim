@@ -43,7 +43,7 @@ local config = {
 
   ---Number of milliseconds before updating winbar.
   ---@type integer
-  updatetime = 1000,
+  updatetime = 1500,
 }
 
 ---Returns a winbar formatted `text` highlighted with `hlgroup`.
