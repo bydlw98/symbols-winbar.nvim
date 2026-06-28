@@ -37,6 +37,10 @@ local config = {
     TypeParameter = " ",
   },
 
+  ---Padding string added to the start of winbar contents.
+  ---@type string
+  left_padding = "  ",
+
   ---Winbar content seperator.
   ---@type string
   seperator = "  ",
@@ -59,7 +63,7 @@ end
 local function path_section()
   local path = vim.fn.expand("%")
   if path == "" then
-    return "[No Name]"
+    return config.left_padding .. "[No Name]"
   end
 
   local components = vim.split(path, "/")
@@ -79,6 +83,8 @@ local function path_section()
     table.remove(components, 1)
     components[1] = "/" .. components[1]
   end
+
+  components[1] = config.left_padding .. components[1]
 
   return table.concat(components, config.seperator)
 end
